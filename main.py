@@ -7,7 +7,7 @@ cursor = conn.cursor()
 
 # Criar Tabela no banco
 def tabela_base():
-    cursor.execute(""" CREATE TABLE IF NOT EXISTS pessoas( id INTEGER PRIMARY KEY AUTO INCREMENT, 
+    cursor.execute(""" CREATE TABLE IF NOT EXISTS pessoas( id INTEGER PRIMARY KEY AUTOINCREMENT, 
                    nome TEXT)
  """)
 
@@ -16,9 +16,16 @@ class App(UserControl):
         super().__init__()
     
         self.todos_dados = Column(auto_scroll=True)
-        self.add_dados = TextField(label='Nome')
-        self.editar_dados = TextField(label='Editar')
 
+        self.add_dados = TextField(label='Nome')
+        self.add_cel = TextField(label='Telefone')
+        self.add_email = TextField(label='E-mail')
+
+        self.editar_dados = TextField(label='Editar')
+        
+
+        tabela_base()
+       
     # FUNÇÃO DELETAR, PASSAMOS O PARAMETRO X PARA REPRESENTAR
     def deletar(self, x , y):
         cursor.execute("DELETE FROM pessoas WHERE id = ?", [x])
@@ -32,7 +39,7 @@ class App(UserControl):
         self.page.update()
 
     def atualizar(self, x, y, z):
-        cursor.execute("UPDATE pessoas SET nome = ? WHERE id = ?",(y,x)) # usar o y = nome x = id (parametros)
+        cursor.execute("UPDATE pessoas SET nome = ? WHERE id = ?",(y.value ,x)) # usar o y = nome x = id (parametros)
         conn.commit()
 
         z.open = False
@@ -58,11 +65,15 @@ class App(UserControl):
                     on_click= lambda e: self.deletar(id, alerta_dialogo)
                 ),
                 ElevatedButton(
-                    "Atualizar", on_click=lambda e:self.atualizar(id, self.editar_dados.value, alerta_dialogo)
+                    "Atualizar", on_click=lambda e:self.atualizar(id, self.editar_dados, alerta_dialogo)
                 )
             ],
             actions_alignment='spaceBetween'
         )
+        self.page.dialog = alerta_dialogo
+        alerta_dialogo.open = True
+        
+        self.page.update()
 
     # AQUI USAREMOS O SELECT PARA MOSTRAR OS DADOS
     def mostrar_dados(self):
@@ -78,15 +89,14 @@ class App(UserControl):
 
                 )
             )
+            self.update()
 
-
-
-
-
+      
 
     # CRIAR NOVO DADO PARA O BANCO
     def adicionar_novo_dado(self, e):
-        cursor.execute("INSER INTO pessoas (nome) VALUES (?)",[self.add_dados.value])
+        cursor.execute("INSERT INTO pessoas (nome) VALUES (?)",[self.add_dados.value])
+        conn.commit()
         self.todos_dados.controls.clear()
         self.mostrar_dados()
         self.page.update()
@@ -99,6 +109,8 @@ class App(UserControl):
         return Column([
             Text("CRUD COM SQLITE",size=20, weight='bold'),
             self.add_dados,
+            self.add_cel,
+            self.add_email,
             ElevatedButton('Adicionar',on_click=self.adicionar_novo_dado),
             self.todos_dados
 
