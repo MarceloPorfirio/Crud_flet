@@ -25,11 +25,12 @@ class App(UserControl):
         self.add_email = TextField(label='E-mail')
 
         self.editar_dados = TextField(label='Nome')
-
+        
         
         
 
         tabela_base()
+        
        
     # FUNÇÃO DELETAR, PASSAMOS O PARAMETRO X PARA REPRESENTAR
     def deletar(self, x , y):
@@ -168,14 +169,16 @@ class App(UserControl):
             self.add_email,
             ElevatedButton('Adicionar',on_click=self.adicionar_novo_dado),
             self.todos_dados,
+            
 
         ])
+    
     
 
 def main(page:Page):
     page.update()
     meu_app = App()
-
+    
     page.add(meu_app)
 
 app(target=main)
