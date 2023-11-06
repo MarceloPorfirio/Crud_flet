@@ -58,7 +58,7 @@ class App(UserControl):
         self.add_cel.value = ""
         self.add_email.value = ""
         # Dê foco ao campo "nome" após a atualização
-        self.add_dados.focus()
+        
 
         self.todos_dados.controls.clear()
         self.mostrar_dados()
